@@ -80,11 +80,20 @@ func SetupWoocommerceRoutes(r *gin.Engine, db *gorm.DB) {
 	customerRepository := repositories.NewCustomerRepository(db)
 	customerController := woocommerce_controllers.NewCustomerController(customerRepository)
 
+	taxRepository := repositories.NewTaxeRepository(db)
+	TaxController := woocommerce_controllers.NewTaxController(taxRepository)
+
+	productRepository := repositories.NewProductRepository(db)
+	ProductController := woocommerce_controllers.NewProductController(productRepository)
+
 	deliveryRepository := repositories.NewDeliveryRepository(db)
 	deliveryController := woocommerce_controllers.NewDeliveryRepository(deliveryRepository)
 
 	featureRepository := repositories.NewFeatureRepository(db)
 	featureController := woocommerce_controllers.NewFeatureRepository(featureRepository)
+
+	orderRepository := repositories.NewOrderRepository(db)
+	orderController := woocommerce_controllers.NewOrderController(orderRepository, customerRepository)
 
 	woocommerceGroup := r.Group("/woocommerce")
 	{
@@ -118,6 +127,8 @@ func SetupWoocommerceRoutes(r *gin.Engine, db *gorm.DB) {
 		// woocommerceGroup.POST("/customerThread", customerController.CreateCustomerThread)
 
 		woocommerceGroup.POST("/customer", customerController.CreateFullCustomers)
+		woocommerceGroup.POST("/taxe", TaxController.CreateTaxes)
+		woocommerceGroup.POST("/product", ProductController.CreateFullProducts)
 
 		woocommerceGroup.POST("/delivery", deliveryController.CreateDelivery)
 
@@ -126,6 +137,8 @@ func SetupWoocommerceRoutes(r *gin.Engine, db *gorm.DB) {
 		woocommerceGroup.POST("/featureShop", featureController.CreateFeatureShop)
 		woocommerceGroup.POST("/featureValue", featureController.CreateFeatureValue)
 		woocommerceGroup.POST("/featureValueLang", featureController.CreateFeatureValueLang)
+
+		woocommerceGroup.POST("/order", orderController.CreateOrder)
 
 	}
 }
