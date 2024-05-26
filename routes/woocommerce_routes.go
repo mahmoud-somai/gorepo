@@ -23,8 +23,8 @@ func SetupWoocommerceRoutes(r *gin.Engine, db *gorm.DB) {
 	// }
 
 	// Add more routes as needed
-	billingRepository := repositories.NewBillingRepository(db)
-	billingController := woocommerce_controllers.NewBillingRepository(billingRepository)
+	// billingRepository := repositories.NewBillingRepository(db)
+	// billingController := woocommerce_controllers.BillingController(billingRepository)
 
 	attributeRepository := repositories.NewAttributeRepository(db)
 	attributeController := woocommerce_controllers.NewAttributeRepository(attributeRepository)
@@ -95,9 +95,29 @@ func SetupWoocommerceRoutes(r *gin.Engine, db *gorm.DB) {
 	orderRepository := repositories.NewOrderRepository(db)
 	orderController := woocommerce_controllers.NewOrderController(orderRepository, customerRepository)
 
+	orderDetailsRepository := repositories.NewOrderDetailsRepository(db)
+	orderDetailsController := woocommerce_controllers.NewOrderDetailController(orderDetailsRepository)
+
+	orderFeesRepository := repositories.NewOrderFeeRepository(db)
+	orderFeesController := woocommerce_controllers.NewOrderFeeController(orderFeesRepository)
+
+	orderCarriersRepository := repositories.NewOrderCarriersRepository(db)
+	orderCarriersController := woocommerce_controllers.NewOrderCarrierController(orderCarriersRepository)
+
+	orderTaxesRepository := repositories.NewOrderTaxRepository(db)
+	orderTaxesController := woocommerce_controllers.NewOrderTaxController(orderTaxesRepository)
+
+	billingRepository := repositories.NewBillingRepository(db)
+	billingController := woocommerce_controllers.NewBillingController(billingRepository)
+
+	shippingRepository := repositories.NewShippingRepository(db)
+	shippingController := woocommerce_controllers.NewShippingController(shippingRepository)
+
 	woocommerceGroup := r.Group("/woocommerce")
 	{
 		woocommerceGroup.POST("/billing", billingController.CreateBilling)
+		woocommerceGroup.POST("/shipping", shippingController.CreateShipping)
+
 		woocommerceGroup.POST("/address", addressController.CreateAddress)
 
 		woocommerceGroup.POST("/attribute", attributeController.CreateAttribute)
@@ -138,7 +158,11 @@ func SetupWoocommerceRoutes(r *gin.Engine, db *gorm.DB) {
 		woocommerceGroup.POST("/featureValue", featureController.CreateFeatureValue)
 		woocommerceGroup.POST("/featureValueLang", featureController.CreateFeatureValueLang)
 
-		woocommerceGroup.POST("/order", orderController.CreateOrder)
+		woocommerceGroup.POST("/order", orderController.CreateOrders)
+		woocommerceGroup.POST("/orderDetails", orderDetailsController.CreateOrderDetails)
+		woocommerceGroup.POST("/orderFees", orderFeesController.CreateOrderFees)
+		woocommerceGroup.POST("/orderCarriers", orderCarriersController.CreateOrderCarrier)
+		woocommerceGroup.POST("/orderTaxes", orderTaxesController.CreateOrderTax)
 
 	}
 }

@@ -15,14 +15,16 @@ func NewBillingRepository(db *gorm.DB) *BillingRepository {
 		DB: db,
 	}
 }
-func (r *BillingRepository) CreateBilling(billing *models.Billing_addresses_woo) error {
+
+func (r *BillingRepository) CreateBilling(billing *models.BillingAddressesWoo) error {
 	return r.DB.Create(billing).Error
 }
 
-func (r *BillingRepository) GetAllBilling() ([]models.Billing_addresses_woo, error) {
-	var billing []models.Billing_addresses_woo
-	if err := r.DB.Find(&billing).Error; err != nil {
-		return nil, err
+func (r *BillingRepository) GetOrderIDByForeignID(OrderID int) (int, error) {
+	var order models.Order
+	result := r.DB.Where("foreign_id = ?", OrderID).First(&order)
+	if result.Error != nil {
+		return 0, result.Error
 	}
-	return billing, nil
+	return int(order.ID), nil
 }

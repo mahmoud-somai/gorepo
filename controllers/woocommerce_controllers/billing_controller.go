@@ -12,25 +12,38 @@ type BillingController struct {
 	BillingRepository *repositories.BillingRepository
 }
 
-func NewBillingRepository(billingRepository *repositories.BillingRepository) *BillingController {
+func NewBillingController(billingRepository *repositories.BillingRepository) *BillingController {
 	return &BillingController{
 		BillingRepository: billingRepository,
 	}
 }
 
+// CreateBilling handles the creation of billing addresses
 func (c *BillingController) CreateBilling(ctx *gin.Context) {
-	var billing models.Billing_addresses_woo
+	var billingAddresses []models.BillingAddressesWoo
 
-	if err := ctx.ShouldBindJSON(&billing); err != nil {
+	if err := ctx.ShouldBindJSON(&billingAddresses); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	// You might want to validate the example data here if needed
+	for i := range billingAddresses {
+		// Get the order ID by foreign ID
+		orderID, err := c.BillingRepository.GetOrderIDByForeignID(int(billingAddresses[i].OrderID))
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get order ID", "details": err.Error()})
+			return
+		}
 
-	if err := c.BillingRepository.CreateBilling(&billing); err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create A Billing"})
-		return
+		// Set the retrieved order ID in the billing address
+		billingAddresses[i].OrderID = int32(orderID)
+
+		// Create the billing address
+		if err := c.BillingRepository.CreateBilling(&billingAddresses[i]); err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create billing address", "details": err.Error()})
+			return
+		}
 	}
-	ctx.JSON(http.StatusCreated, billing)
+
+	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "created_billing_addresses": billingAddresses})
 }

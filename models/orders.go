@@ -10,7 +10,7 @@ const TableNameOrder = "orders"
 type Order struct {
 	ID                    int32   `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
 	TenantID              string  `gorm:"column:tenant_id;default:bfb674eb-0286-4f42-8103-749a22bb8ae2" json:"tenant_id"`
-	ShopID                int32   `gorm:"column:shop_id" json:"shop_id"`
+	ShopID                int32   `gorm:"column:shop_id"  json:"shop_id"`
 	ForeignID             int32   `gorm:"column:foreign_id" json:"foreign_id"`
 	AddressDeliveryID     int32   `gorm:"column:address_delivery_id" json:"address_delivery_id"`
 	AddressInvoiceID      int32   `gorm:"column:address_invoice_id" json:"address_invoice_id"`
@@ -73,9 +73,9 @@ type Orderdetail struct {
 	TenantID                  string    `gorm:"column:tenant_id;default:bfb674eb-0286-4f42-8103-749a22bb8ae2" json:"tenant_id"`
 	OrderID                   int32     `gorm:"column:order_id" json:"order_id"`
 	ProductID                 int32     `gorm:"column:product_id" json:"product_id"`
-	ProductAttributeID        int32     `gorm:"column:product_attribute_id" json:"product_attribute_id"`
-	ShopID                    int32     `gorm:"column:shop_id" json:"shop_id"`
-	TaxRulesGroupID           int32     `gorm:"column:tax_rules_group_id" json:"tax_rules_group_id"`
+	ProductAttributeID        *int32    `gorm:"column:product_attribute_id" json:"product_attribute_id,omitempty"`
+	ShopID                    int32     `gorm:"column:shop_id;default:1" json:"shop_id"`
+	TaxRulesGroupID           *int32    `gorm:"column:tax_rules_group_id" json:"tax_rules_group_id,omitempty"`
 	ForeignID                 int32     `gorm:"column:foreign_id" json:"foreign_id"`
 	OrderInvoiceID            int32     `gorm:"column:order_invoice_id" json:"order_invoice_id"`
 	IDWarehouseID             int32     `gorm:"column:id_warehouse_id" json:"id_warehouse_id"`
@@ -123,4 +123,41 @@ type Orderdetail struct {
 // TableName Orderdetail's table name
 func (*Orderdetail) TableName() string {
 	return TableNameOrderdetail
+}
+
+const TableNameOrderCarrier = "order_carriers"
+
+// OrderCarrier mapped from table <order_carriers>
+type OrderCarrier struct {
+	ID                  int32     `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
+	TenantID            string    `gorm:"column:tenant_id;default:bfb674eb-0286-4f42-8103-749a22bb8ae2" json:"tenant_id"`
+	OrderID             int32     `gorm:"column:order_id" json:"order_id"`
+	CarrierID           *int32    `gorm:"column:carrier_id" json:"carrier_id,omitempty"`
+	ForeignID           int32     `gorm:"column:foreign_id" json:"foreign_id"`
+	Name                string    `gorm:"column:name" json:"name"`
+	OrderInvoice        int32     `gorm:"column:order_invoice" json:"order_invoice"`
+	Weight              float32   `gorm:"column:weight" json:"weight"`
+	ShippingCostTaxExcl float32   `gorm:"column:shipping_cost_tax_excl" json:"shipping_cost_tax_excl"`
+	ShippingCostTaxIncl float32   `gorm:"column:shipping_cost_tax_incl" json:"shipping_cost_tax_incl"`
+	TrackingNumber      int32     `gorm:"column:tracking_number" json:"tracking_number"`
+	DateAdded           time.Time `gorm:"column:date_added" json:"date_added"`
+}
+
+// TableName OrderCarrier's table name
+func (*OrderCarrier) TableName() string {
+	return TableNameOrderCarrier
+}
+
+const TableNameOrderTax = "order_taxes"
+
+// OrderTax mapped from table <order_taxes>
+type OrderTax struct {
+	ID      int32 `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
+	TaxID   int32 `gorm:"column:tax_id" json:"tax_id"`
+	OrderID int32 `gorm:"column:order_id" json:"order_id"`
+}
+
+// TableName OrderTax's table name
+func (*OrderTax) TableName() string {
+	return TableNameOrderTax
 }
