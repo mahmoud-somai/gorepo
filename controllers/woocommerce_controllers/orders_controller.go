@@ -6,6 +6,7 @@ import (
 	"shifti-connector-backend/repositories"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type OrderController struct {
@@ -35,15 +36,21 @@ func (c *OrderController) CreateOrders(ctx *gin.Context) {
 		// Look up the actual customer_id based on foreign_id
 		customerID, err := c.CustomerRepository.GetCustomerIDByForeignID(order.CustomerID)
 		if err != nil {
-			failedOrders = append(failedOrders, order)
-			failedReasons = append(failedReasons, "Failed to find customer")
-			continue
+			if err == gorm.ErrRecordNotFound {
+				// Skip the order if the customer is not found
+				continue
+			} else {
+				failedOrders = append(failedOrders, order)
+				failedReasons = append(failedReasons, "Failed to lookup customer: "+err.Error())
+				continue
+			}
 		}
 		order.CustomerID = customerID
 
+		// Attempt to create the order
 		if err := c.OrderRepository.CreateOrder(&order); err != nil {
 			failedOrders = append(failedOrders, order)
-			failedReasons = append(failedReasons, "Failed to create order")
+			failedReasons = append(failedReasons, "Failed to create order: "+err.Error())
 			continue
 		}
 	}

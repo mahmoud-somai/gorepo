@@ -68,6 +68,9 @@ func (r *CustomerRepository) CreateFullCustomer(customer *models.Customer, custo
 func (r *CustomerRepository) GetCustomerIDByForeignID(foreignID int32) (int32, error) {
 	var customer models.Customer
 	if err := r.DB.Where("foreign_id = ?", foreignID).First(&customer).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return 0, err
+		}
 		return 0, err
 	}
 	return int32(customer.ID), nil

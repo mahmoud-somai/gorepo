@@ -4,14 +4,14 @@ type Category struct {
 	ID               uint `gorm:"primaryKey"`
 	Tenant_ID        string
 	Parent_ID        uint
-	Level_Depth      int
-	Active           uint
-	Is_Root_Category uint
-	Position         int
-	Meta_Title       string
-	Meta_Description string
-	Meta_Keywords    string
-	Link_Rewrite     string
+	Level_Depth      *int    `gorm:"column:level_depth" json:"level_depth,omitempty"`
+	Active           *uint   `gorm:"column:active" json:"active,omitempty"`
+	Is_Root_Category *uint   `gorm:"column:is_root_category" json:"is_root_category,omitempty"`
+	Position         *int    `gorm:"column:position" json:"position,omitempty"`
+	Meta_Title       *string `gorm:"column:meta_title" json:"meta_title,omitempty"`
+	Meta_Description *string `gorm:"column:meta_description" json:"meta_description,omitempty"`
+	Meta_Keywords    *string `gorm:"column:meta_keywords" json:"meta_keywords,omitempty"`
+	Link_Rewrite     *string `gorm:"column:link_rewrite" json:"link_rewrite,omitempty"`
 }
 
 func (Category) TableName() string {

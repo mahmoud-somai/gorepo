@@ -71,27 +71,21 @@ func (c *CustomerController) CreateFullCustomers(ctx *gin.Context) {
 		}
 
 		address := &models.Addresses{
-			Tenant_ID:       req.TenantID,
-			Shop_ID:         req.ShopID,
-			Foreign_ID:      req.ForeignID,
-			Manufacturer_ID: req.ManufacturerID,
-			Supplier_ID:     req.SupplierID,
-			Warehouse_ID:    req.WarehouseID,
-			Country_ID:      req.CountryID,
-			State_ID:        req.StateID,
-			Alias:           req.Alias,
-			Company:         req.Company,
-			Last_Name:       req.LastName,
-			First_Name:      req.FirstName,
-			VAT_Number:      req.VatNumber,
-			Address1:        req.Address1,
-			Address2:        req.Address2,
-			Postcode:        req.Postcode,
-			City:            req.City,
-			Other:           req.Other,
-			Phone:           req.Phone,
-			Phone_Mobile:    req.PhoneMobile,
-			DNI:             req.DNI,
+			Tenant_ID:  req.TenantID,
+			Shop_ID:    req.ShopID,
+			Foreign_ID: req.ForeignID,
+
+			Company:    req.Company,
+			Last_Name:  req.LastName,
+			First_Name: req.FirstName,
+
+			Address1: req.Address1,
+			Address2: req.Address2,
+			Postcode: req.Postcode,
+			City:     req.City,
+
+			Phone:        req.Phone,
+			Phone_Mobile: req.PhoneMobile,
 
 			Woo_Country: req.WooCountry,
 			Woo_State:   req.WooState,

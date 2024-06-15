@@ -6,6 +6,7 @@ import (
 	"shifti-connector-backend/repositories"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type OrderDetailController struct {
@@ -30,16 +31,26 @@ func (c *OrderDetailController) CreateOrderDetails(ctx *gin.Context) {
 		// Retrieve the product ID by the foreign ID
 		productID, err := c.OrderDetailsRepository.GetProductIDByForeignID(int(orderDetail.ProductID))
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve product ID"})
-			return
+			if err == gorm.ErrRecordNotFound {
+				// Skip the order detail if the product is not found
+				continue
+			} else {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve product ID"})
+				return
+			}
 		}
 		orderDetail.ProductID = int32(productID)
 
 		// Retrieve the order ID by the foreign ID
 		orderID, err := c.OrderDetailsRepository.GetOrderIDByForeignID(int(orderDetail.OrderID))
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve order ID"})
-			return
+			if err == gorm.ErrRecordNotFound {
+				// Skip the order detail if the order is not found
+				continue
+			} else {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve order ID"})
+				return
+			}
 		}
 		orderDetail.OrderID = int32(orderID)
 

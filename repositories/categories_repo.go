@@ -1,57 +1,3 @@
-// package repositories
-
-// import (
-// 	"shifti-connector-backend/models"
-
-// 	"gorm.io/gorm"
-// )
-
-// type CategoryRepository struct {
-// 	DB *gorm.DB
-// }
-
-// func NewCategoryRepository(db *gorm.DB) *CategoryRepository {
-// 	return &CategoryRepository{
-// 		DB: db,
-// 	}
-// }
-
-// // func (r *CategoryRepository) CreateCategory(category *models.Category) error {
-// // 	return r.DB.Create(category).Error
-// // }
-
-// // func (r *CategoryRepository) GetAllCategory() ([]models.Category, error) {
-// // 	var category []models.Category
-// // 	if err := r.DB.Find(&category).Error; err != nil {
-// // 		return nil, err
-// // 	}
-// // 	return category, nil
-// // }
-
-// func (r *CategoryRepository) CreateCategories(category []models.Category) error {
-// 	return r.DB.Create(&category).Error
-// }
-
-// func (r *CategoryRepository) CreateCategoryLang(category_Lang *models.CategoryLang) error {
-// 	return r.DB.Create(category_Lang).Error
-// }
-
-// func (r *CategoryRepository) CreateCategoryProduct(category_Product *models.CategoryProduct) error {
-// 	return r.DB.Create(category_Product).Error
-// }
-
-// func (r *CategoryRepository) CreateCategoryShop(category_Shop *models.CategoryShop) error {
-// 	return r.DB.Create(category_Shop).Error
-// }
-
-// func (r *CategoryRepository) GetAllCategory() ([]models.Category, error) {
-// 	var categories []models.Category
-// 	if err := r.DB.Find(&categories).Error; err != nil {
-// 		return nil, err
-// 	}
-// 	return categories, nil
-// }
-
 package repositories
 
 import (
@@ -88,6 +34,18 @@ func (r *CategoryRepository) GetAllCategories() ([]models.Category, error) {
 		return nil, err
 	}
 	return categories, nil
+}
+
+// Check if a category exists by ForeignID and TenantID
+func (r *CategoryRepository) CategoryExists(tenantID string, foreignID uint) (bool, error) {
+	var category models.CategoryShop
+	if err := r.DB.Where("tenant_id = ? AND foreign_id = ?", tenantID, foreignID).First(&category).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return false, nil
+		}
+		return false, err
+	}
+	return true, nil
 }
 
 // CreateFullCategory handles the creation of a category, categoryLang, and categoryShop within a transaction

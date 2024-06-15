@@ -67,11 +67,11 @@ func (pc *ProductController) CreateFullProducts(ctx *gin.Context) {
 
 	for _, req := range reqs {
 		product := &models.Product{
-			TenantID:         req.TenantID,
-			ProductID:        req.ForeignID,
-			DefaultImageID:   req.DefaultImageID,
-			ManufacturerID:   req.ManufacturerID, // Nullable field
-			TaxRuleGroupID:   req.TaxID,
+			TenantID:       req.TenantID,
+			ProductID:      req.ForeignID,
+			DefaultImageID: req.DefaultImageID,
+			ManufacturerID: req.ManufacturerID, // Nullable field
+
 			Name:             req.Name,
 			Reference:        req.Reference,
 			Slug:             req.Slug,

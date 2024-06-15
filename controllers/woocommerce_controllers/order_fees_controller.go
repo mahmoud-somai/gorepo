@@ -6,6 +6,7 @@ import (
 	"shifti-connector-backend/repositories"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type OrderFeeController struct {
@@ -32,8 +33,13 @@ func (c *OrderFeeController) CreateOrderFees(ctx *gin.Context) {
 		// Get the order ID by foreign ID
 		orderID, err := c.OrderFeesRepository.GetOrderIDByForeignID(int(order_fee.OrderID))
 		if err != nil {
-			ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get order ID", "details": err.Error()})
-			return
+			if err == gorm.ErrRecordNotFound {
+				// Skip the order detail if the order is not found
+				continue
+			} else {
+				ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve order ID"})
+				return
+			}
 		}
 
 		// Set the retrieved order ID in the order fee

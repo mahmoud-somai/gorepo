@@ -18,11 +18,3 @@ func NewAddressesRepository(db *gorm.DB) *AddressesRepository {
 func (r *AddressesRepository) CreateAddress(address *models.Addresses) error {
 	return r.DB.Create(address).Error
 }
-
-func (r *AddressesRepository) GetAllAddresses() ([]models.Addresses, error) {
-	var address []models.Addresses
-	if err := r.DB.Find(&address).Error; err != nil {
-		return nil, err
-	}
-	return address, nil
-}

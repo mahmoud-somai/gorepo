@@ -12,8 +12,8 @@ type Product struct {
 	TenantID         string    `gorm:"column:tenant_id;default:bfb674eb-0286-4f42-8103-749a22bb8ae2" json:"tenant_id"`
 	ProductID        uint      `gorm:"column:product_id" json:"product_id"`
 	DefaultImageID   uint      `gorm:"column:default_image_id" json:"default_image_id"`
-	ManufacturerID   *uint     `gorm:"column:manufacturer_id" json:"manufacturer_id"` // Pointer to uint to allow NULL
-	TaxRuleGroupID   uint      `gorm:"column:tax_rule_group_id" json:"tax_rule_group_id"`
+	ManufacturerID   *uint     `gorm:"column:manufacturer_id" json:"manufacturer_id,omitempty"` // Pointer to uint to allow NULL
+	TaxRuleGroupID   *uint     `gorm:"column:tax_rule_group_id" json:"tax_rule_group_id,omitempty"`
 	Name             string    `gorm:"column:name" json:"name"`
 	Reference        string    `gorm:"column:reference" json:"reference"`
 	Slug             string    `gorm:"column:slug" json:"slug"`
